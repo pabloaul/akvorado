@@ -16,6 +16,8 @@ import (
 func SetupLogging(debug bool) {
 	if isatty.IsTerminal(os.Stdout.Fd()) {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	} else if writer := newJournalWriter(); writer != nil {
+		log.Logger = zerolog.New(writer).With().Timestamp().Logger()
 	} else {
 		log.Logger = zerolog.New(os.Stdout).With().Timestamp().Logger()
 	}
